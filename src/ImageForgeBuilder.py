@@ -1,3 +1,4 @@
+# noinspection PyBroadException
 #! /usr/bin/python3
 import bpy, os
 
@@ -16,6 +17,9 @@ frame_names = [
     'Paper_25',
     'Paper_50',
     'Paper_100',
+    'Paper_250',
+    'Paper_500',
+    'Paper_1000',
     ] # Replace with your actual list of names
 
 # Get scene and render settings
@@ -28,47 +32,61 @@ original_path = render.filepath
 
 bpy.data.scenes["Scene"].render.resolution_x = 512          # Render -> Format -> Resolution X
 bpy.data.scenes["Scene"].render.resolution_y = 512          # Render -> Format -> Resolution Y
-bpy.data.scenes["Scene"].view_settings.view_transform = 1   # Render -> Color Management -> View Transform
 
 
 
 # Build Coins
-for frame in range(0, 4 + 1):
+for frame in range(0, 4+1):
     # Set current frame
     scene.frame_set(frame)
     
     # Set output path for this frame
-    frame_index = frame - scene.frame_start
-    frame_name = frame_names[frame_index]
+    frame_name = frame_names[frame]
     render.filepath = f"//images/{frame_name}.png"
     
     # Render frame
+    bpy.context.scene.camera = bpy.data.objects["CoinCam"]
     bpy.ops.render.render(write_still=True)
 
 
 # Build Paper Bills
-for frame in range(5, 5 + 7 + 1):
+for frame in range(5, 5+9+1):
+    scene.frame_set(frame)
 
+        # Render Bill Texture
     bpy.data.scenes["Scene"].render.resolution_x = 1280
     bpy.data.scenes["Scene"].render.resolution_y = 512
-    bpy.data.scenes["Scene"].view_settings.view_transform = 7
 
     # Set output path for this frame
-    frame_index = frame - scene.frame_start
-    frame_name = frame_names[frame_index]
-    render.filepath = f"//build/images/{frame_name}.png"
+    frame_name = frame_names[frame]
+    render.filepath = f"//../build/images/{frame_name}.png"
 
     # Render frame
+    bpy.context.scene.camera = bpy.data.objects["BillBuildCam"]
     bpy.ops.render.render(write_still=True)
 
 
+    # Update texture image with the rendered bill texture
+    paper_bill_texture = bpy.data.materials["PaperBill"].node_tree.nodes["Image Texture"]
+    paper_bill_texture.image = bpy.data.images.load(render.filepath)
+
+
+        # Render Bill
     bpy.data.scenes["Scene"].render.resolution_x = 512*2
     bpy.data.scenes["Scene"].render.resolution_y = 512
-    bpy.data.scenes["Scene"].view_settings.view_transform = 1
+    
+    # Set output path for this frame
+    frame_name = frame_names[frame]
+    render.filepath = f"//images/{frame_name}.png"
 
+    # Render frame
+    bpy.context.scene.camera = bpy.data.objects["BillCam"]
+    bpy.ops.render.render(write_still=True)
 
 
 
 
 # Restore original render path
 render.filepath = original_path
+
+print('\a')

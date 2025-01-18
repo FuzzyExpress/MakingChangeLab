@@ -21,9 +21,13 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
+/build/
 
 ### VS Code ###
 .vscode/
 
 ### Mac OS ###
 .DS_Store
+
+### Blender ###
+*.blend*
