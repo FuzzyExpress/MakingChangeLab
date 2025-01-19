@@ -31,3 +31,4 @@ bin/
 
 ### Blender ###
 *.blend*
+/.idea/discord.xml
