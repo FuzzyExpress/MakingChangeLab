@@ -1,6 +1,14 @@
-# noinspection PyBroadException
 #! /usr/bin/python3
-import bpy, os
+# noinspection PyBroadException
+import bpy, random
+
+"""
+This script can not be run as standalone.
+To use it install Blender 4.3.2 or later
+  and use the Scripting tab to run it.
+Further development can be done by installing 
+  the blender python extension in VSCode. 
+"""
 
 # List of names for the rendered frames
 frame_names = [
@@ -34,6 +42,10 @@ bpy.data.scenes["Scene"].render.resolution_x = 512          # Render -> Format -
 bpy.data.scenes["Scene"].render.resolution_y = 512          # Render -> Format -> Resolution Y
 
 
+def rng():
+    bpy.data.node_groups["Geometry Nodes"].nodes["Wave Texture"].inputs[6].default_value = random.random()*10
+    bpy.data.node_groups["Geometry Nodes"].nodes["Noise Texture"].inputs[1].default_value = random.random()*10
+
 
 # Build Coins
 for frame in range(0, 4+1):
@@ -45,6 +57,7 @@ for frame in range(0, 4+1):
     render.filepath = f"//images/{frame_name}.png"
     
     # Render frame
+    rng()
     bpy.context.scene.camera = bpy.data.objects["CoinCam"]
     bpy.ops.render.render(write_still=True)
 
@@ -80,6 +93,7 @@ for frame in range(5, 5+9+1):
     render.filepath = f"//images/{frame_name}.png"
 
     # Render frame
+    rng()
     bpy.context.scene.camera = bpy.data.objects["BillCam"]
     bpy.ops.render.render(write_still=True)
 
