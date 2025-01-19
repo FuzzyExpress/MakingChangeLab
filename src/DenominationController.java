@@ -12,11 +12,10 @@ public class DenominationController
         for (int i = 0; i < 5+9+1; i++)
         {
             String name = (i < 5 ? "Coin" : "Paper") + "_" + types[i];
+            String displayName = (i < 5 ? "¢" : "$") + types[i];
             double amt  = (i < 5 ? 0.01 : 1) * types[i];
             Form form   = (i < 5 ? Form.coin : Form.bill);
-            denominations.put( amt, new Denomination(name, amt, form, "images/" + types[i] + ".png") );
-            //denominations.add( new Denomination(name, amt, form, "images/" + types[i] + ".png") );
-            // print(denominations.get(i));
+            denominations.put( amt, new Denomination(name, displayName, amt, form, "images/" + types[i] + ".png") );
         }
         return denominations;
     }

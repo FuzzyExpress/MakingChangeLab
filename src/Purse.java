@@ -1,5 +1,8 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.Collections;
+import java.util.ArrayList;
 
 /*
 Purse (class)
@@ -12,10 +15,20 @@ toString(): String // returns a string representation of the Purse and its conte
 public class Purse {
     public Map<Denomination, Integer> cash = new HashMap<Denomination, Integer>();
 
+    void purse()
+    {}
+
+    void purse(double amt)
+    {
+        cash = Register.makeChange(amt).cash;
+    }
 
     public void add(Denomination denomination, int amount)
     {
-        cash.put(denomination, amount);
+        if (cash.containsKey(denomination))
+            cash.put(denomination, cash.get(denomination) + amount);
+        else
+            cash.put(denomination, amount);
     }
     public double remove(Denomination denomination, int amount)
     {
@@ -37,11 +50,17 @@ public class Purse {
 
     @Override
     public String toString() {
-        String str = "Contents: ";
-        for ( Map.Entry<Denomination, Integer> entry : cash.entrySet() )
-        {
-            str += entry.getKey() + " -> " + entry.getValue();
+        String str = "< Purse: ";
+        // Convert to list and sort
+        List<Map.Entry<Denomination, Integer>> sortedEntries = 
+            new ArrayList<>(cash.entrySet());
+        
+        Collections.sort(sortedEntries, 
+            (e1, e2) -> Double.compare(e2.getKey().amt(), e1.getKey().amt()));
+        
+        for (Map.Entry<Denomination, Integer> entry : sortedEntries) {
+            str += entry.getKey().displayName() + ": " + entry.getValue() + ", ";
         }
-        return str;
+        return str + ">";
     }
 }
