@@ -14,9 +14,15 @@ public class DenominationController
             String displayName = (i < 5 ? "¢" : "$") + types[i];
             double amt  = (i < 5 ? 0.01 : 1) * types[i];
             Form form   = (i < 5 ? Form.coin : Form.bill);
-            denominations.put( amt, new Denomination(name, displayName, amt, form, "images/" + types[i] + ".png") );
+            denominations.put( amt, new Denomination(name, displayName, amt, form, "images/!/" + types[i] + ".png") );
         }
         return denominations;
+    }
+
+    public static String ImageSize(Denomination d, String type)
+    {
+        String[] strs = d.displayName().split("!");
+        return strs[0] + type + strs[1];
     }
 
     // Make a separate list of the value types to make looping easier in other zones
