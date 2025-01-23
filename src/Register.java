@@ -5,7 +5,7 @@ public class Register {
     private static void calculate(Purse purse, double amt)
     {
         purse.add( DenominationController.Types().get(amt), 1 );
-        print("purse.add(" + amt + ")");
+        // print("purse.add(" + amt + ")");
     }
 
 
@@ -26,7 +26,7 @@ public class Register {
                         applied = true;
                         calculate(purse, num);
                         amt -= num;
-                        print(amt, num, i);
+                        // print(amt, num, i);
                     }
                 }
                 // Less than 1 cent is needed to prevent

@@ -1,8 +1,4 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.Collections;
-import java.util.ArrayList;
+import java.util.*;
 
 /*
 Purse (class)
@@ -12,13 +8,25 @@ remove(type: Denomination, num: int): double //diminishes the money in the purse
 getValue(): double // returns the amount of money in the Purse
 toString(): String // returns a string representation of the Purse and its contents
 */
-public class Purse {
-    public Map<Denomination, Integer> cash = new HashMap<Denomination, Integer>();
+// Comparator that sort elements according to marks in
+// Ascending order
+class DenominationCompare implements Comparator<Denomination> {
+    public int compare(Denomination s1, Denomination s2)
+    {
+        if (s1.amt() == s2.amt())
+            return 0;
+        return s1.amt() > s2.amt() ? -1 : 1;
+    }
+}
 
-    void purse()
+public class Purse {
+    //public Map<Denomination, Integer> cash = new HashMap<Denomination, Integer>();
+    public TreeMap<Denomination, Integer> cash = new TreeMap<Denomination, Integer>(new DenominationCompare());
+
+    public void purse()
     {}
 
-    void purse(double amt)
+    public void purse(double amt)
     {
         cash = Register.makeChange(amt).cash;
     }
@@ -48,19 +56,19 @@ public class Purse {
         return total;
     }
 
+    
+
     @Override
     public String toString() {
         String str = "< Purse: ";
-        // Convert to list and sort
-        List<Map.Entry<Denomination, Integer>> sortedEntries = 
-            new ArrayList<>(cash.entrySet());
-        
-        Collections.sort(sortedEntries, 
-            (e1, e2) -> Double.compare(e2.getKey().amt(), e1.getKey().amt()));
-        
-        for (Map.Entry<Denomination, Integer> entry : sortedEntries) {
-            str += entry.getKey().displayName() + ": " + entry.getValue() + ", ";
+
+        int counter = 0;
+        for (Map.Entry<Denomination, Integer> entry : cash.entrySet())
+        {
+            str += entry.getKey().displayName() + ": " + entry.getValue() + ( counter == cash.size() - 1 ? " " : ", ");
+            counter++;
         }
+
         return str + ">";
     }
 }
