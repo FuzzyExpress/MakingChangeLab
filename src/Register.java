@@ -11,29 +11,31 @@ public class Register {
 
     public static Purse makeChange(double amt)
     {
+        // gosh darn rounding errors ruining everything
+        // Blow up the Doubles and replace them is Ints!!
+        int cents = (int) (amt * 100);
         Purse purse = new Purse();
         do {
-            amt = Math.round(amt * 100.0) / 100.0;
-
+            //amt = Math.round(amt * 100.0) / 100.0;
             do {
                 int l = DenominationController.Values().length;
                 // Applied is needed so that the loop only uses the larges value.
                 boolean applied = false;
                 for (int i = l-1; i >= 0 ; i--) {
-                    double num = DenominationController.Values()[i];
-                    if (amt >= num && !applied)
+                    int num = (int) ( DenominationController.Values()[i] * 100 );
+                    if (cents >= num && !applied)
                     {
                         applied = true;
-                        calculate(purse, num);
-                        amt -= num;
+                        calculate(purse, (double) num /100);
+                        cents -= num;
                         // print(amt, num, i);
                     }
                 }
                 // Less than 1 cent is needed to prevent
                 // rounding errors from jamming the loop
-            } while (amt > 0.01);
+            } while (cents > 1);
 
-        } while (amt > 0);
+        } while (cents > 0);
         return purse;
     }
 }

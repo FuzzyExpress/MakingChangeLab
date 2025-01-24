@@ -1,12 +1,14 @@
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class DenominationController
 {
+    // Here I create a list of ints, and then transform those into Denominations.
     private static final int[] types = {1, 5, 10, 25, 50, 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000};
     public static Map<Double, Denomination> Types()
     {   // Loop to construct dictionary of denominations
-        Map<Double, Denomination> denominations = new HashMap<>();
+        Map<Double, Denomination> denominations = new TreeMap<>(Double::compareTo); // CompareTo makes it auto sort.
+        // TreeMap<Denomination, Integer> cash = new TreeMap<Denomination, Integer>(new DenominationCompare());
 
         for (int i = 0; i < 5+9+1; i++)
         {
@@ -14,14 +16,16 @@ public class DenominationController
             String displayName = (i < 5 ? "¢" : "$") + types[i];
             double amt  = (i < 5 ? 0.01 : 1) * types[i];
             Form form   = (i < 5 ? Form.coin : Form.bill);
-            denominations.put( amt, new Denomination(name, displayName, amt, form, "images/!/" + types[i] + ".png") );
+            // /home/evans/Documents/Java/MakingChangeLab/src/images/!/
+            denominations.put( amt, new Denomination(name, displayName, amt, form, "src/images/!/" + name + ".png") );
         }
         return denominations;
     }
 
-    public static String ImageSize(Denomination d, String type)
+    public static String getImage(Denomination d, String type)
     {
-        String[] strs = d.displayName().split("!");
+        // this split and replace allows for having 2 images with only one item
+        String[] strs = d.img().split("!");
         return strs[0] + type + strs[1];
     }
 

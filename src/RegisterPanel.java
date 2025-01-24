@@ -2,18 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.SocketOption;
 
 public class RegisterPanel extends JPanel {
     public static Register register;
-    private JLabel outputPanel;
-    private JPanel inputPanel;
+    private JLabel outputLabel;
     private JTextField inputField;
     public PursePanel changePanel;
     public RegisterPanel() {
         register = new Register();
-        outputPanel = new JLabel();
-        inputPanel = new JPanel();
+        outputLabel = new JLabel();
         inputField = new JTextField();
         changePanel = new PursePanel();
 
@@ -23,46 +20,48 @@ public class RegisterPanel extends JPanel {
         this.setBackground(Color.white);
         inputField.setBackground(Color.lightGray);
         inputField.setForeground(Color.black);
+        // Need to grab inputs from the input box
         inputField.addActionListener(new InputListener() {});
         inputField.setHorizontalAlignment(SwingConstants.CENTER);
         inputField.setMaximumSize(new Dimension(300, 30));
         inputField.setPreferredSize(new Dimension(300, 30));
 
-
-        outputPanel.setBackground(Color.white);
-        outputPanel.setForeground(Color.black);
-        outputPanel.setHorizontalAlignment(SwingConstants.CENTER);
-        outputPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        outputLabel.setBackground(Color.white);
+        outputLabel.setForeground(Color.black);
+        outputLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        outputLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
         this.setPreferredSize(new Dimension(500, 500));
         // inputField.setPreferredSize(new Dimension(300, 30));
 
-        // make the input panel centred
-        this.add(inputPanel);
-        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.X_AXIS));
-        inputPanel.add(Box.createHorizontalGlue());
-        inputPanel.add(inputField);
-        inputPanel.add(Box.createHorizontalGlue());
+        // Modular Layout was made as a way to add Glue spacers more DRY
+        this.add( new ModularLayout(inputField) );
+        this.add( new ModularLayout(outputLabel) );
+        this.add( new ModularLayout(changePanel) );
 
-        this.add(inputPanel);
-        this.add(outputPanel);
-        this.add(changePanel);
+        // changePanel.setBackground(Color.white);
+        outputLabel.setText(" ");
+
+
     }
 
+    // this grabs the inputs from the box
     private class InputListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             //System.out.println(e.getActionCommand());
             String str = e.getActionCommand();
-            System.out.println(str);
+            // System.out.println(str);
             try {
                 Purse cash = Register.makeChange(Double.parseDouble(str));
                 str = cash.toString();
-                outputPanel.setText( str.substring(2+7, str.length()-3) );
-                changePanel.purse = cash;
+                // Just trim the '< ' and ' >' off of the purse string.
+                outputLabel.setText( str.substring(2+7, str.length()-1) );
+                // changePanel.supplyPurse(cash);
+                changePanel.draw(cash);
                 changePanel.repaint();
             }
             catch (NumberFormatException skullEmoji) {
-                outputPanel.setText( "Please input a number! 🤔" );
+                outputLabel.setText( "Please input a number!" );
             }
 
 

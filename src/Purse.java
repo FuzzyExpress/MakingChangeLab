@@ -10,6 +10,7 @@ toString(): String // returns a string representation of the Purse and its conte
 */
 // Comparator that sort elements according to marks in
 // Ascending order
+// I needed to make a custom Comparator for the Denominations
 class DenominationCompare implements Comparator<Denomination> {
     public int compare(Denomination s1, Denomination s2)
     {
@@ -21,15 +22,13 @@ class DenominationCompare implements Comparator<Denomination> {
 
 public class Purse {
     //public Map<Denomination, Integer> cash = new HashMap<Denomination, Integer>();
-    public TreeMap<Denomination, Integer> cash = new TreeMap<Denomination, Integer>(new DenominationCompare());
+    public TreeMap<Denomination, Integer> cash = new TreeMap<>(new DenominationCompare());
 
-    public void purse()
-    {}
-
-    public void purse(double amt)
+    public Purse(double amt)
     {
         cash = Register.makeChange(amt).cash;
     }
+    public Purse () {}
 
     public void add(Denomination denomination, int amount)
     {
@@ -42,6 +41,8 @@ public class Purse {
     {
         double amt = this.getValue();
         amt -= amount;
+        if (amt < 0.01)   // It is what it is... :skull:
+            throw new ArithmeticException("Negative amount!");
 
         cash = Register.makeChange(amt).cash;
         return amt;
@@ -56,10 +57,13 @@ public class Purse {
         return total;
     }
 
-    
+    public TreeMap<Denomination, Integer> getCash() {
+        return cash;
+    }
 
     @Override
     public String toString() {
+        // Make an easy-to-read view of the purse contents
         String str = "< Purse: ";
 
         int counter = 0;
