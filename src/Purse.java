@@ -39,20 +39,38 @@ public class Purse {
     }
     public double remove(Denomination denomination, int amount)
     {
-        double amt = this.getValue();
-        amt -= amount;
-        if (amt < 0.01)   // It is what it is... :skull:
-            throw new ArithmeticException("Negative amount!");
+        double amt = denomination.amt() * amount;
+        double current = this.getValue();
+        if (current < amt)
+            throw new ArithmeticException("Insufficient funds!");
 
-        cash = Register.makeChange(amt).cash;
+        // Remove the specific denomination
+        if (cash.containsKey(denomination)) {
+            int currentCount = cash.get(denomination);
+            if (currentCount >= amount) {
+                cash.put(denomination, currentCount - amount);
+                if (cash.get(denomination) == 0) {
+                    cash.remove(denomination);
+                }
+                return amt;
+            }
+        }
+        
+        // If we can't remove exactly what was requested, recalculate the whole purse
+        double newAmount = current - amt;
+        if (newAmount < 0.01)
+            throw new ArithmeticException("Negative amount!");
+            
+        cash = Register.makeChange(newAmount).cash;
         return amt;
     }
+    
     public double getValue()
     {
         double total = 0;
-        for (double cash : cash.values())
+        for (Map.Entry<Denomination, Integer> entry : cash.entrySet())
         {
-            total += cash;
+            total += entry.getKey().amt() * entry.getValue();
         }
         return total;
     }

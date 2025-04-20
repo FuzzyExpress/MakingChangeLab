@@ -7,11 +7,14 @@ public class Main {
         System.out.println("Hello, World!");
         Purse wallet = new Purse();
 
+        // Set the default change strategy (you can change it to DynamicProgrammingChangeStrategy)
+        Register.setChangeStrategy(new GreedyChangeStrategy());
+
         java.util.Scanner scanner = new java.util.Scanner(System.in);
 
         String str = "";
         do {
-            print("[q] to quit\n[mk] <Double> to makeChange\n[rm] <Double> <Integer> to remove something\n[ad] <Double> <Integer> to add something\n[ls] to list Denominations");
+            print("[q] to quit\n[mk] <Double> to makeChange\n[rm] <Double> <Integer> to remove something\n[ad] <Double> <Integer> to add something\n[ls] to list Denominations\n[st] [g/d] to set strategy (g=greedy, d=dynamic)");
             print("\nwhat do you want to do?");
             str = scanner.nextLine();
             // command arguments
@@ -38,7 +41,7 @@ public class Main {
                         count = Integer.parseInt(strs[2]);
                         double rm = 0;
                         try {
-                            rm = wallet.remove(DenominationController.Types().get(amount), count);
+                            rm = wallet.remove(DenominationController.getInstance().getTypes().get(amount), count);
                             print("Removed: " + rm + ", now: " + wallet);
                         } catch (ArithmeticException e) {
                             print("You do not have sufficient funds.");
@@ -48,7 +51,7 @@ public class Main {
                     case "ad":
                         amount = Double.parseDouble(strs[1]);
                         count = Integer.parseInt(strs[2]);
-                        wallet.add(DenominationController.Types().get(amount), count);
+                        wallet.add(DenominationController.getInstance().getTypes().get(amount), count);
                         print(wallet);
                         break;
 
@@ -56,7 +59,7 @@ public class Main {
                         count = 0;
                         String outString = "";
                         // \t is tab. We use these to make ls take less vertical space.
-                        for (Map.Entry<Double, Denomination> entry : DenominationController.Types().entrySet()) {
+                        for (Map.Entry<Double, Denomination> entry : DenominationController.getInstance().getTypes().entrySet()) {
                             outString += entry.getValue().displayName() + (count <= 2 ? "\t\t" : "\n");
                             count++;
                             if (count > 3) {
@@ -64,6 +67,18 @@ public class Main {
                             }
                         }
                         print(outString);
+                        break;
+                        
+                    case "st":
+                        if (strs.length > 1 && strs[1].equals("g")) {
+                            Register.setChangeStrategy(new GreedyChangeStrategy());
+                            print("Change strategy set to Greedy (uses largest denominations first)");
+                        } else if (strs.length > 1 && strs[1].equals("d")) {
+                            Register.setChangeStrategy(new DynamicProgrammingChangeStrategy());
+                            print("Change strategy set to Dynamic Programming (optimizes for fewest coins)");
+                        } else {
+                            print("Unknown strategy. Use 'g' for greedy or 'd' for dynamic programming.");
+                        }
                         break;
 
                     default:

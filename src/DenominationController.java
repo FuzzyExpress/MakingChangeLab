@@ -3,22 +3,52 @@ import java.util.TreeMap;
 
 public class DenominationController
 {
+    // Singleton instance
+    private static DenominationController instance;
+
     // Here I create a list of ints, and then transform those into Denominations.
     private static final int[] types = {1, 5, 10, 25, 50, 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000};
-    public static Map<Double, Denomination> Types()
-    {   // Loop to construct dictionary of denominations
-        Map<Double, Denomination> denominations = new TreeMap<>(Double::compareTo); // CompareTo makes it auto sort.
-        // TreeMap<Denomination, Integer> cash = new TreeMap<Denomination, Integer>(new DenominationCompare());
+    private Map<Double, Denomination> denominations;
+    private double[] values;
 
+    // Private constructor for Singleton pattern
+    private DenominationController() {
+        initializeDenominations();
+        initializeValues();
+    }
+
+    // Get singleton instance
+    public static synchronized DenominationController getInstance() {
+        if (instance == null) {
+            instance = new DenominationController();
+        }
+        return instance;
+    }
+
+    // Initialize denominations map
+    private void initializeDenominations() {
+        denominations = new TreeMap<>(Double::compareTo); // CompareTo makes it auto sort.
+        
         for (int i = 0; i < 5+9+1; i++)
         {
             String name = (i < 5 ? "Coin" : "Paper") + "_" + types[i];
             String displayName = (i < 5 ? "¢" : "$") + types[i];
             double amt  = (i < 5 ? 0.01 : 1) * types[i];
             Form form   = (i < 5 ? Form.coin : Form.bill);
-            // /home/evans/Documents/Java/MakingChangeLab/src/images/!/
-            denominations.put( amt, new Denomination(name, displayName, amt, form, "src/images/!/" + name + ".png") );
+            denominations.put(amt, new Denomination(name, displayName, amt, form, "src/images/!/" + name + ".png"));
         }
+    }
+
+    // Initialize values array
+    private void initializeValues() {
+        values = new double[types.length];
+        for (int i = 0; i < values.length; i++)
+        {
+            values[i] = (i < 5 ? 0.01 : 1) * types[i];
+        }
+    }
+
+    public Map<Double, Denomination> getTypes() {
         return denominations;
     }
 
@@ -29,14 +59,7 @@ public class DenominationController
         return strs[0] + type + strs[1];
     }
 
-    // Make a separate list of the value types to make looping easier in other zones
-    public static double[] Values()
-    {
-        double[] values = new double[ types.length ];
-        for (int i = 0; i < values.length; i++)
-        {
-            values[i] = (i < 5 ? 0.01 : 1) * types[i];
-        }
+    public double[] getValues() {
         return values;
     }
 }

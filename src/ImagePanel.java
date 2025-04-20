@@ -55,7 +55,10 @@ public class ImagePanel extends JLabel {
         @Override
         public void mouseClicked(MouseEvent arg0) {
             System.out.println( "Mouse Clicked: " + denomination.displayName() );
-            new ImageViewer(denomination);
+            for (int i =0; i < count; i++)
+            {
+                new ImageViewer(denomination);
+            }
         }
 
         @Override
